@@ -94,6 +94,7 @@ app_target.frameworks_build_phase.add_file_reference(project.frameworks_group.ne
 app_target.frameworks_build_phase.add_file_reference(project.frameworks_group.new_file('System/Library/Frameworks/CoreAudio.framework', :sdk_root), true)
 app_target.frameworks_build_phase.add_file_reference(project.frameworks_group.new_file('System/Library/Frameworks/AudioToolbox.framework', :sdk_root), true)
 app_target.frameworks_build_phase.add_file_reference(project.frameworks_group.new_file('System/Library/Frameworks/CoreBluetooth.framework', :sdk_root), true)
+app_target.frameworks_build_phase.add_file_reference(project.frameworks_group.new_file('System/Library/Frameworks/CoreMotion.framework', :sdk_root), true)
 
 # Configure Build Settings
 app_target.build_configurations.each do |config|

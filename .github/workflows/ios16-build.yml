@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - CMakeLists.txt
+      - generate_project.rb
       - src/**
       - AetherPS4-iOS/**
       - externals/CMakeLists.txt

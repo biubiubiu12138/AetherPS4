@@ -20,8 +20,8 @@
 namespace Common {
 
 template <typename Condvar, typename Lock, typename Pred>
-void CondvarWait(Condvar& cv, std::unique_lock<Lock>& lk, std::stop_token token, Pred&& pred) {
-    cv.wait(lk, token, std::forward<Pred>(pred));
+bool CondvarWait(Condvar& cv, std::unique_lock<Lock>& lk, std::stop_token token, Pred&& pred) {
+    return cv.wait(lk, token, std::forward<Pred>(pred));
 }
 
 template <typename Rep, typename Period>
@@ -333,19 +333,17 @@ private:
 namespace Common {
 
 template <typename Condvar, typename Lock, typename Pred>
-void CondvarWait(Condvar& cv, std::unique_lock<Lock>& lk, std::stop_token token, Pred pred) {
-    if (token.stop_requested()) {
-        return;
-    }
-
-    std::stop_callback callback(token, [&] {
-        {
-            std::scoped_lock lk2{*lk.mutex()};
+bool CondvarWait(Condvar& cv, std::unique_lock<Lock>& lk, std::stop_token token, Pred pred) {
+    // Registering a synchronous stop callback while holding lk can deadlock
+    // with this project's stop_state callback mutex. Normal notifications stay
+    // immediate; timed waits bound cancellation latency without that lock cycle.
+    while (!pred()) {
+        if (token.stop_requested()) {
+            return false;
         }
-        cv.notify_all();
-    });
-
-    cv.wait(lk, [&] { return pred() || token.stop_requested(); });
+        cv.wait_for(lk, std::chrono::milliseconds(20));
+    }
+    return true;
 }
 
 template <typename Rep, typename Period>

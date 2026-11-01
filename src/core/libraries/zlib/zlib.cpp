@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2024 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include "common/polyfill_thread.h"
 #include <condition_variable>
 #include <mutex>
 #include <stop_token>
@@ -48,7 +49,7 @@ void ZlibTaskThread(const std::stop_token& stop) {
         {
             // Lock and pop from the task queue, unless stop has been requested.
             std::unique_lock lock(mutex);
-            if (!task_queue_cv.wait(lock, stop, [&] { return !task_queue.empty(); })) {
+            if (!Common::CondvarWait(task_queue_cv, lock, stop, [&] { return !task_queue.empty(); })) {
                 break;
             }
             task = task_queue.front();

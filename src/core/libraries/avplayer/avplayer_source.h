@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "common/polyfill_thread.h"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -121,7 +122,7 @@ public:
     template <class Pred>
     bool Wait(std::stop_token stop, Pred pred) {
         std::unique_lock lock(m_mutex);
-        return m_cv.wait(lock, std::move(stop), std::move(pred));
+        return Common::CondvarWait(m_cv, lock, std::move(stop), std::move(pred));
     }
 
     template <class Pred, class Rep, class Period>

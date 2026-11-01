@@ -32,3 +32,7 @@ jobs:
             -I runtime/sources/fexcore-darwin/CodeEmitter \
             tests/ios16/write_priority_mutex.cpp -o /tmp/aether-mutex-test
           /tmp/aether-mutex-test
+      - name: Test cancellation-aware wait fallback
+        run: |
+          xcrun clang++ -std=c++20 -O2 -pthread -I src tests/ios16/stop_wait.cpp -o /tmp/aether-stop-wait-test
+          python3 -c 'import subprocess; subprocess.run(["/tmp/aether-stop-wait-test"], check=True, timeout=15)'

@@ -23,3 +23,12 @@ jobs:
             -I src/platform/ios -I src/core/pkg_extract \
             -I src/core/sysmodules_import -I src/core/user_profile_bridge \
             "${sources[@]}"
+      - name: Stress test backported reader/writer mutex
+        run: |
+          xcrun clang++ -std=c++20 -O2 -pthread \
+            -I runtime/sources/fexcore-darwin/FEXCore/include \
+            -I runtime/sources/fexcore-darwin/External/fmt/include \
+            -I runtime/sources/fexcore-darwin/FEXHeaderUtils \
+            -I runtime/sources/fexcore-darwin/CodeEmitter \
+            tests/ios16/write_priority_mutex.cpp -o /tmp/aether-mutex-test
+          /tmp/aether-mutex-test

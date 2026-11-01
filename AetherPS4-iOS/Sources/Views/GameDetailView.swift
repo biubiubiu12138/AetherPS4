@@ -23,7 +23,7 @@ struct GameDetailView: View {
                         .shadow(color: .black.opacity(0.35), radius: 8, x: 0, y: 4)
                 } else {
                     RoundedRectangle(cornerRadius: 14)
-                        .fill(.background.secondary)
+                        .fill(Color(uiColor: .secondarySystemBackground))
                         .aspectRatio(1, contentMode: .fit)
                         .frame(maxWidth: 180)
                         .overlay(
@@ -129,7 +129,7 @@ struct GameDetailView: View {
             }
         }
         .padding(20)
-        .background(.background.secondary)
+        .background(Color(uiColor: .secondarySystemBackground))
         .confirmationDialog(
             "Remove \"\(game.name)\" from your library?",
             isPresented: $showRemoveConfirmation,

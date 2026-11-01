@@ -1,0 +1,38 @@
+name: Build experimental iOS 16.2 IPA
+on:
+  push:
+    paths:
+      - CMakeLists.txt
+      - externals/CMakeLists.txt
+      - .gitmodules
+      - .github/workflows/ios16-build.yml
+      - runtime/scripts/build-ios16.sh
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+      - name: Fetch native dependencies
+        run: |
+          paths=$(git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}' | grep -vE 'box64|winlator|mesa-kosmickrisp|vulkan-loader')
+          git submodule update --init --depth 1 --jobs 8 -- $paths
+          git submodule foreach --recursive 'git submodule update --init --depth 1 --jobs 8'
+      - name: Install build utilities
+        run: |
+          brew install ninja cmake
+          python3 -m venv /tmp/aether-build-python
+          /tmp/aether-build-python/bin/pip install packaging
+          echo /tmp/aether-build-python/bin >> "$GITHUB_PATH"
+          gem install xcodeproj --user-install --no-document
+      - name: Build FEX, native core and app
+        run: bash runtime/scripts/build-ios16.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AetherPS4-iOS16.2-experimental
+          path: runtime/build/ios16-output/*.ipa
+          if-no-files-found: error

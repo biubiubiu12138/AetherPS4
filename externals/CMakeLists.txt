@@ -37,7 +37,13 @@ endif()
 
 # FFmpeg
 if (NOT TARGET FFmpeg::ffmpeg)
-    add_subdirectory(ffmpeg-core)
+    if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        # Upstream's iOS frontend already uses ffmpeg_stub.cpp; never link macOS archives.
+        add_library(ffmpeg INTERFACE)
+        target_include_directories(ffmpeg INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/ffmpeg-core/include")
+    else()
+        add_subdirectory(ffmpeg-core)
+    endif()
     add_library(FFmpeg::ffmpeg ALIAS ffmpeg)
 endif()
 

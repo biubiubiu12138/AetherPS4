@@ -165,3 +165,8 @@
 [submodule "externals/libdeflate"]
 	path = externals/libdeflate
 	url = https://github.com/ebiggers/libdeflate.git
+
+[submodule "externals/ffmpeg-core"]
+	path = externals/ffmpeg-core
+	url = https://github.com/shadps4-emu/ext-ffmpeg-core.git
+	shallow = true

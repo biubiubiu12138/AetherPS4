@@ -30,7 +30,7 @@ cmake -S . -B "$CORE_BUILD" -G Ninja \
   -DENABLE_DISCORD_RPC=OFF -DENABLE_UPDATER=OFF \
   -DFEXCORE_GUEST_CPU_SOURCE_DIR="$ROOT/runtime/sources/fexcore-darwin" \
   -DFEXCORE_GUEST_CPU_BUILD_DIR="$FEX_BUILD"
-cmake --build "$CORE_BUILD" --target shadps4_ios --parallel 3
+cmake --build "$CORE_BUILD" --target shadps4_ios --parallel 3 -- -k 0
 mkdir -p "$CORE_BUILD/fexcore-ios-libs"
 find "$FEX_BUILD" -name '*.a' -exec cp {} "$CORE_BUILD/fexcore-ios-libs/" \;
 ruby generate_project.rb

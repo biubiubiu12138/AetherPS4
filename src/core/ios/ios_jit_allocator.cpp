@@ -123,6 +123,19 @@ std::atomic<uint64_t> g_allocation_counter{0};
 
 DualMappedRegion DualMappedRegion::Allocate(size_t bytes) noexcept {
     DualMappedRegion region;
+    if (__builtin_available(iOS 17.0, *)) {
+        // Keep the upstream StikDebug protocol on newer systems.
+    } else {
+        void* address = mmap(nullptr, bytes, PROT_READ | PROT_WRITE | PROT_EXEC,
+                             MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        if (address == MAP_FAILED) {
+            LOG_ERROR(Core, "Legacy iOS JIT allocation denied");
+            return region;
+        }
+        region.rw_addr = region.rx_addr = static_cast<uint8_t*>(address);
+        region.size = bytes;
+        return region;
+    }
     const uint64_t request_number = g_allocation_counter.fetch_add(1, std::memory_order_relaxed) + 1;
 
     // Ask the StikDebug-serviced BRK protocol for a FRESH allocation (x0 == 0) to get the
@@ -228,6 +241,12 @@ DualMappedRegion DualMappedRegion::Allocate(size_t bytes) noexcept {
 }
 
 void DualMappedRegion::Release() noexcept {
+    if (rw_addr != nullptr && rw_addr == rx_addr) {
+        munmap(rw_addr, size);
+        rw_addr = rx_addr = nullptr;
+        size = 0;
+        return;
+    }
     if (rw_addr != nullptr) {
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(rw_addr), static_cast<vm_size_t>(size));
         rw_addr = nullptr;

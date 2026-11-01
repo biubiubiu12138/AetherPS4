@@ -459,6 +459,24 @@ void* GetWritableAddress(void* ExecAddr) {
 std::atomic<uint64_t> AllocationCounter{0};
 
 void* iOSJITAlloc(size_t Size) {
+  if (__builtin_available(iOS 17.0, *)) {
+    // Newer systems retain the upstream external-debugger protocol below.
+  } else {
+    // TrollStore's dynamic-codesigning entitlement can permit ordinary JIT
+    // mappings on iOS 16. Fail cleanly if the OS rejects the actual allocation.
+    void* Address = ::mmap(nullptr, Size, PROT_READ | PROT_WRITE | PROT_EXEC,
+                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (Address == MAP_FAILED) {
+      LogMan::Msg::EFmt("Legacy iOS JIT allocation denied (errno={})", errno);
+      return nullptr;
+    }
+    auto& Table = GetJITMappingTable();
+    std::lock_guard<std::mutex> Lock(Table.Mutex);
+    const auto Base = reinterpret_cast<uintptr_t>(Address);
+    Table.WriteToExec[Base] = MappedRegion{Base, Size};
+    Table.ExecToWrite[Base] = MappedRegion{Base, Size};
+    return Address;
+  }
   const uint64_t RequestNumber = AllocationCounter.fetch_add(1, std::memory_order_relaxed) + 1;
   const auto& Symbols = GetBreakpointJITSymbols();
   if (Symbols.get_jit_mapping == nullptr) {
@@ -526,7 +544,9 @@ bool iOSJITFreeIfOwned(void* WriteAddr, size_t Size) {
   Table.WriteToExec.erase(It);
   Table.ExecToWrite.erase(ExecBase);
   vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(WriteAddr), static_cast<vm_size_t>(Size));
-  vm_deallocate(mach_task_self(), static_cast<vm_address_t>(ExecBase), static_cast<vm_size_t>(Size));
+  if (ExecBase != reinterpret_cast<uintptr_t>(WriteAddr)) {
+    vm_deallocate(mach_task_self(), static_cast<vm_address_t>(ExecBase), static_cast<vm_size_t>(Size));
+  }
   return true;
 }
 

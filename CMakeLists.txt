@@ -1599,6 +1599,7 @@ if (ENABLE_SHADPS4_IOS_LIB)
     endif()
 
     target_sources(shadps4_ios PRIVATE
+        src/platform/bachata/audio_transport.cpp
         src/core/sysmodules_import/sysmodules_import.cpp
         src/core/user_profile_bridge/user_profile_bridge.cpp)
     create_target_directory_groups(shadps4_ios)

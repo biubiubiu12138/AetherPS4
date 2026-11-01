@@ -43,7 +43,7 @@ struct SetupCheckView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     checkRow(title: "Memory Entitlement", detail: "com.apple.developer.kernel.increased-memory-limit", phase: memoryPhase)
                     Divider().padding(.leading, 52)
-                    checkRow(title: "JIT Script (StikDebug)", detail: "Required for guest code execution", phase: jitPhase)
+                    checkRow(title: "JIT Memory", detail: "Required for guest code execution", phase: jitPhase)
                 }
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -106,11 +106,18 @@ struct SetupCheckView: View {
         }
     }
 
+    private var jitHelpText: String {
+        if #available(iOS 17.0, *) {
+            return "StikDebug isn't attached, or its JIT script isn't running. Open StikDebug, run the Universal JIT Script, then return here."
+        }
+        return "JIT memory allocation was denied. Install through TrollStore with the dynamic-codesigning entitlement, then retry."
+    }
+
     private var failureHelp: some View {
         VStack(spacing: 12) {
             if jitPhase == .failed {
                 VStack(spacing: 8) {
-                    Text("StikDebug isn't attached, or its JIT script isn't running. Open StikDebug, run the Universal JIT Script, then return here.")
+                    Text(jitHelpText)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - CMakeLists.txt
+      - src/**
+      - AetherPS4-iOS/**
       - externals/CMakeLists.txt
       - .gitmodules
       - .github/workflows/ios16-build.yml

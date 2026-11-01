@@ -13,11 +13,11 @@ struct SettingsAudioView: View {
                     Text("SDL").tag(0)
                     Text("OpenAL").tag(1)
                 }
-                .onChange(of: audioBackend) { _, v in store.setInt("Audio", "audio_backend", v) }
+                .onChange(of: audioBackend) { v in store.setInt("Audio", "audio_backend", v) }
             }
             Section {
                 Toggle("Disable Audio Output", isOn: $audioOutputDisabled)
-                    .onChange(of: audioOutputDisabled) { _, v in
+                    .onChange(of: audioOutputDisabled) { v in
                         store.setBool("Audio", "disable_audio_output", v)
                     }
             } footer: {

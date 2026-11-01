@@ -9,7 +9,7 @@ enum LibrarySortOrder: String, CaseIterable {
 }
 
 struct LibraryView: View {
-    @Environment(GameLibrary.self) private var library
+    @EnvironmentObject private var library: GameLibrary
     @State private var searchText = ""
     @State private var sortOrder: LibrarySortOrder = .dateAddedNewest
 
@@ -66,7 +66,7 @@ struct LibraryView: View {
         }
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search games")
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 Menu {
                     Picker("Sort", selection: $sortOrder) {
                         ForEach(LibrarySortOrder.allCases, id: \.self) { order in
@@ -77,14 +77,14 @@ struct LibraryView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     library.refresh()
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     isImporterPresented = true
                 } label: {

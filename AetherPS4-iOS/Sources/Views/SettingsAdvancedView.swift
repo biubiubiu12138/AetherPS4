@@ -17,9 +17,9 @@ struct SettingsAdvancedView: View {
         Form {
             Section("Debug") {
                 Toggle("Debug Register Dump", isOn: $debugDump)
-                    .onChange(of: debugDump) { _, v in store.setBool("Debug", "debug_dump", v) }
+                    .onChange(of: debugDump) { v in store.setBool("Debug", "debug_dump", v) }
                 Toggle("Collect Shaders", isOn: $shaderCollect)
-                    .onChange(of: shaderCollect) { _, v in store.setBool("Debug", "shader_collect", v) }
+                    .onChange(of: shaderCollect) { v in store.setBool("Debug", "shader_collect", v) }
             }
 
             Section("Export Game Executable") {

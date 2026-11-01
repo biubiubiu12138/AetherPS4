@@ -12,13 +12,13 @@ struct SettingsConsoleView: View {
         Form {
             Section {
                 Toggle("PS4 Pro Mode (Neo)", isOn: $neoMode)
-                    .onChange(of: neoMode) { _, v in store.setBool("General", "neo_mode", v) }
+                    .onChange(of: neoMode) { v in store.setBool("General", "neo_mode", v) }
                 Toggle("Dev Kit Mode", isOn: $devKitMode)
-                    .onChange(of: devKitMode) { _, v in store.setBool("General", "dev_kit_mode", v) }
+                    .onChange(of: devKitMode) { v in store.setBool("General", "dev_kit_mode", v) }
                 Stepper("Extra Flexible Memory: \(extraDmemMBytes) MB", value: $extraDmemMBytes, in: 0...2048, step: 128)
-                    .onChange(of: extraDmemMBytes) { _, v in store.setInt("General", "extra_dmem_in_mbytes", v) }
+                    .onChange(of: extraDmemMBytes) { v in store.setInt("General", "extra_dmem_in_mbytes", v) }
                 Toggle("Show Splash Screen", isOn: $showSplashScreen)
-                    .onChange(of: showSplashScreen) { _, v in store.setBool("General", "show_splash", v) }
+                    .onChange(of: showSplashScreen) { v in store.setBool("General", "show_splash", v) }
             }
         }
         .navigationTitle("Console")

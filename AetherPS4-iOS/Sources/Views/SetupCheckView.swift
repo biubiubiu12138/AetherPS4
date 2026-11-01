@@ -88,7 +88,7 @@ struct SetupCheckView: View {
             .padding(24)
         }
         .onAppear { runChecks() }
-        .onChange(of: scenePhase) { _, newPhase in
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active, hasFailure {
                 runChecks()
             }
@@ -100,7 +100,6 @@ struct SetupCheckView: View {
             Image(systemName: everythingPassed ? "checkmark.circle.fill" : (hasFailure ? "exclamationmark.triangle.fill" : "gearshape.2"))
                 .font(.system(size: 44))
                 .foregroundStyle(everythingPassed ? .green : (hasFailure ? .yellow : .secondary))
-                .symbolEffect(.pulse, isActive: isChecking)
                 .padding(.top, 24)
             Text(everythingPassed ? "Setup Verified" : (hasFailure ? "Setup Check Failed" : "Verifying Setup…"))
                 .font(.title2.bold())

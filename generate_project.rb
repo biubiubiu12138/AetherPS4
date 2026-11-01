@@ -11,14 +11,8 @@ FileUtils.mkdir_p(project_dir)
 project = Xcodeproj::Project.new(project_path)
 
 # Add iOS target
-# Must match CMAKE_OSX_DEPLOYMENT_TARGET used to build libshadps4_ios.a (see
-# runtime/build/shadps4-ios's configure invocation) -- a lower value here links
-# fine but is inconsistent metadata, and some of libshadps4_ios.a's object code
-# was compiled assuming this floor. iOS specifically builds at 18.0 (see the
-# CMAKE_SYSTEM_NAME STREQUAL "iOS" branch in CMakeLists.txt) -- the 26.0 floor
-# elsewhere in that file is a macOS-only requirement (KosmicKrisp), which iOS never
-# bundles (it renders through MoltenVK instead, with no comparable floor).
-app_target = project.new_target(:application, project_name, :ios, '18.0')
+# Rebuild all native libraries with the same deployment target before packaging.
+app_target = project.new_target(:application, project_name, :ios, '16.2')
 
 # Source directory
 sources_dir = project.main_group.new_group('Sources', 'Sources')
@@ -116,7 +110,7 @@ app_target.build_configurations.each do |config|
   config.build_settings['OTHER_LDFLAGS'] = ['-ObjC', '-lc++']
   config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', build_dir, "#{build_dir}/**"]
   config.build_settings['FRAMEWORK_SEARCH_PATHS'] = ['$(inherited)', "#{File.absolute_path(project_dir)}/Frameworks"]
-  config.build_settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', File.absolute_path('src/platform/ios'), File.absolute_path('src/core/pkg_extract')]
+  config.build_settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', File.absolute_path('src/platform/ios'), File.absolute_path('src/core/pkg_extract'), File.absolute_path('src/core/sysmodules_import'), File.absolute_path('src/core/user_profile_bridge')]
   config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] = "AetherPS4-iOS-Bridging-Header.h"
   
   # Important for JIT and entitlements

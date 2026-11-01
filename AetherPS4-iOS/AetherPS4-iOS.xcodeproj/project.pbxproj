@@ -140,7 +140,7 @@
 		2BF7B645A25F0860E0122BE0 /* ConfigStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConfigStore.swift; path = Models/ConfigStore.swift; sourceTree = "<group>"; };
 		2CE0E569702A9D0AA8AB1E1E /* libZydis.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libZydis.a; path = "../runtime/build/shadps4-ios/externals/zydis/libZydis.a"; sourceTree = "<group>"; };
 		2D99CF6698E4497D59975C15 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
-		2ECCC396D441E0F6955E4CB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2ECCC396D441E0F6955E4CB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		33DEFA9DCB93040378FB1B26 /* GameLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GameLibrary.swift; path = Models/GameLibrary.swift; sourceTree = "<group>"; };
 		35C9E4CA9C0E0C237646DBD0 /* libpng.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libpng.a; path = "../runtime/build/shadps4-ios/externals/libpng/libpng.a"; sourceTree = "<group>"; };
 		39133C33C799E2AB872A8B44 /* libvulkan.dylib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "compiled.mach-o.dylib"; path = libvulkan.dylib; sourceTree = "<group>"; };
@@ -651,22 +651,22 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/AetherPS4-iOS/Frameworks",
+					"$(SRCROOT)/../AetherPS4-iOS/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/platform/ios",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/pkg_extract",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/sysmodules_import",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/user_profile_bridge",
+					"$(SRCROOT)/../src/platform/ios",
+					"$(SRCROOT)/../src/core/pkg_extract",
+					"$(SRCROOT)/../src/core/sysmodules_import",
+					"$(SRCROOT)/../src/core/user_profile_bridge",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/runtime/build/shadps4-ios",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/runtime/build/shadps4-ios/**",
+					"$(SRCROOT)/../runtime/build/shadps4-ios",
+					"$(SRCROOT)/../runtime/build/shadps4-ios/**",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -751,22 +751,22 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/AetherPS4-iOS/Frameworks",
+					"$(SRCROOT)/../AetherPS4-iOS/Frameworks",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/platform/ios",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/pkg_extract",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/sysmodules_import",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/src/core/user_profile_bridge",
+					"$(SRCROOT)/../src/platform/ios",
+					"$(SRCROOT)/../src/core/pkg_extract",
+					"$(SRCROOT)/../src/core/sysmodules_import",
+					"$(SRCROOT)/../src/core/user_profile_bridge",
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/runtime/build/shadps4-ios",
-					"/Users/davi/Documents/Coding/AetherCore4/aetherps4-public-release/runtime/build/shadps4-ios/**",
+					"$(SRCROOT)/../runtime/build/shadps4-ios",
+					"$(SRCROOT)/../runtime/build/shadps4-ios/**",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (

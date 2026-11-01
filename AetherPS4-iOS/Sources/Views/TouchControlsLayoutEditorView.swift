@@ -8,7 +8,7 @@ import SwiftUI
 // exact same position math and TouchLayoutStore persistence the real overlay reads from, so
 // a drag here shows up in the next game launch's real controls.
 struct TouchControlsLayoutEditorView: View {
-    @Environment(EmulatorProcess.self) private var emulator
+    @EnvironmentObject private var emulator: EmulatorProcess
     @StateObject private var layout = TouchLayoutStore.shared
 
     var body: some View {

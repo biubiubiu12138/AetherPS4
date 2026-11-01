@@ -1,0 +1,25 @@
+name: iOS 16.2 frontend compatibility
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  typecheck:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+      - name: Typecheck actual app sources for iOS 16.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          sources=()
+          while IFS= read -r file; do sources+=("$file"); done < <(find AetherPS4-iOS/Sources -name '*.swift' | sort)
+          xcrun swiftc -typecheck -swift-version 5 -target arm64-apple-ios16.2 \
+            -sdk "$(xcrun --sdk iphoneos --show-sdk-path)" \
+            -import-objc-header AetherPS4-iOS/AetherPS4-iOS-Bridging-Header.h \
+            -I src/platform/ios -I src/core/pkg_extract \
+            -I src/core/sysmodules_import -I src/core/user_profile_bridge \
+            "${sources[@]}"

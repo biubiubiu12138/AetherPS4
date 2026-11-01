@@ -61,8 +61,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct AetherPS4App: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @State private var library = GameLibrary()
-    @State private var emulator = EmulatorProcess()
+    @StateObject private var library = GameLibrary()
+    @StateObject private var emulator = EmulatorProcess()
 
     init() {
         CrashLogger.shared.setup()
@@ -79,10 +79,10 @@ struct AetherPS4App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(library)
-                .environment(emulator)
+                .environmentObject(library)
+                .environmentObject(emulator)
         }
-        .onChange(of: scenePhase) { _, phase in
+        .onChange(of: scenePhase) { phase in
             // External drives can be plugged/unplugged while the app is backgrounded -- catches
             // that instead of only re-checking when the user happens to open Settings > Storage.
             if phase == .active {

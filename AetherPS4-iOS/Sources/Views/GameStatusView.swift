@@ -4,7 +4,7 @@ import SwiftUI
 /// github.com/c4ndyf1sh/aetherPS4-Compatibility-List's issues (one issue per game, labeled with
 /// a compatibility tier). Read-only: tapping a game opens its GitHub issue for the full report.
 struct GameStatusView: View {
-    private var store = GameStatusStore.shared
+    @ObservedObject private var store = GameStatusStore.shared
 
     @State private var searchText = ""
     @State private var selectedTiers: Set<CompatibilityTier> = []
@@ -24,11 +24,14 @@ struct GameStatusView: View {
                 ProgressView("Loading compatibility list…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if store.games.isEmpty, let errorMessage = store.errorMessage {
-                ContentUnavailableView {
+                VStack(spacing: 12) {
                     Label("Can't Load Game Status", systemImage: "wifi.slash")
-                } description: {
+                        .font(.headline)
                     Text(errorMessage)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
+                .padding()
             } else {
                 List {
                     if let errorMessage = store.errorMessage {
@@ -57,7 +60,7 @@ struct GameStatusView: View {
         .navigationTitle("Game Status")
         .searchable(text: $searchText, prompt: "Search games")
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     ForEach(CompatibilityTier.allCases, id: \.self) { tier in
                         Toggle(tier.rawValue, isOn: Binding(

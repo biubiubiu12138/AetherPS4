@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 struct GameDetailView: View {
-    @Environment(GameLibrary.self) private var library
-    @Environment(EmulatorProcess.self) private var emulator
+    @EnvironmentObject private var library: GameLibrary
+    @EnvironmentObject private var emulator: EmulatorProcess
     @Environment(\.dismiss) private var dismiss
 
     let game: Game

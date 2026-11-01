@@ -6,7 +6,7 @@ import SwiftUI
 /// spare. See ExternalStorageStore's own comment for why this needs a persisted
 /// security-scoped bookmark rather than just a remembered path.
 struct SettingsStorageView: View {
-    @Bindable private var externalStorage = ExternalStorageStore.shared
+    @ObservedObject private var externalStorage = ExternalStorageStore.shared
     @State private var isFolderPickerPresented = false
     @State private var showForgetConfirmation = false
 

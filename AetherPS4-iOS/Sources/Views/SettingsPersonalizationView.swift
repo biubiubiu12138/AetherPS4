@@ -71,7 +71,7 @@ struct SettingsPersonalizationView: View {
                 .padding(.vertical, 6)
 
                 ColorPicker("Custom Color", selection: $customColor, supportsOpacity: false)
-                    .onChange(of: customColor) { _, newValue in
+                    .onChange(of: customColor) { newValue in
                         theme.accentColor = newValue
                     }
 
@@ -86,7 +86,7 @@ struct SettingsPersonalizationView: View {
             usernameDraft = profile.username
             customColor = theme.accentColor
         }
-        .onChange(of: selectedPhotoItem) { _, item in
+        .onChange(of: selectedPhotoItem) { item in
             loadPickedPhoto(item)
         }
     }

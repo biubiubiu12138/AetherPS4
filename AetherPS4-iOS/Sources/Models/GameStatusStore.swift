@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 
 /// One game's compatibility report, sourced 1:1 from a GitHub issue in
 /// c4ndyf1sh/aetherPS4-Compatibility-List -- that repo tracks one issue per game, titled with
@@ -92,8 +92,7 @@ enum CompatibilityTier: String, CaseIterable {
 /// github.com/c4ndyf1sh/aetherPS4-Compatibility-List's issues. Unauthenticated GitHub API calls
 /// are capped at 60/hour per IP, so results are cached to disk and only refetched when stale
 /// (or when the user explicitly pulls to refresh) rather than on every tab visit.
-@Observable
-final class GameStatusStore {
+final class GameStatusStore: ObservableObject {
     static let shared = GameStatusStore()
 
     private static let apiURL = URL(
@@ -102,10 +101,10 @@ final class GameStatusStore {
         .appendingPathComponent("game_status_cache.json")
     private static let minRefreshInterval: TimeInterval = 15 * 60
 
-    private(set) var games: [GameStatus] = []
-    private(set) var lastUpdated: Date?
-    private(set) var isLoading = false
-    private(set) var errorMessage: String?
+    @Published private(set) var games: [GameStatus] = []
+    @Published private(set) var lastUpdated: Date?
+    @Published private(set) var isLoading = false
+    @Published private(set) var errorMessage: String?
 
     private init() {
         loadCache()

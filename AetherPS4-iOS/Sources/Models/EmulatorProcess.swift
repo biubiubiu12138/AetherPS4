@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 import UIKit
 
 enum EmulatorRunState: Equatable {
@@ -17,18 +17,17 @@ struct ConsoleLine: Identifiable {
 }
 
 @MainActor
-@Observable
-final class EmulatorProcess {
-    private(set) var state: EmulatorRunState = .idle
-    private(set) var consoleLines: [ConsoleLine] = []
-    private(set) var runningGameName: String?
+final class EmulatorProcess: ObservableObject {
+    @Published private(set) var state: EmulatorRunState = .idle
+    @Published private(set) var consoleLines: [ConsoleLine] = []
+    @Published private(set) var runningGameName: String?
 
     private var didInit = false
     // Set the instant launch() is called, cleared once the rotation-wait below hands off
     // to the rest of launch -- guards against a second launch() call re-entering during
     // that window, since state itself doesn't flip to .running until after it (see
     // launch()'s own comment for why the wait has to come first).
-    private var isPreparingToLaunch = false
+    @Published private var isPreparingToLaunch = false
 
     var isRunning: Bool {
         if case .running = state { return true }

@@ -48,7 +48,7 @@ struct SettingsGraphicsView: View {
                         Text(preset.label).tag(preset.id)
                     }
                 }
-                .onChange(of: selectedResolutionId) { _, id in
+                .onChange(of: selectedResolutionId) { id in
                     guard let preset = Self.resolutionPresets.first(where: { $0.id == id }) else { return }
                     store.setInt("GPU", "internal_screen_width", preset.width)
                     store.setInt("GPU", "internal_screen_height", preset.height)
@@ -60,31 +60,31 @@ struct SettingsGraphicsView: View {
 
             Section("GPU & Rendering") {
                 Toggle("Null GPU (Skip Rendering)", isOn: $nullGpu)
-                    .onChange(of: nullGpu) { _, v in store.setBool("GPU", "null_gpu", v) }
+                    .onChange(of: nullGpu) { v in store.setBool("GPU", "null_gpu", v) }
                 Toggle("Dump Shaders", isOn: $dumpShaders)
-                    .onChange(of: dumpShaders) { _, v in store.setBool("GPU", "dump_shaders", v) }
+                    .onChange(of: dumpShaders) { v in store.setBool("GPU", "dump_shaders", v) }
                 Picker("GPU Readbacks", selection: $readbacksMode) {
                     Text("Disabled").tag(0)
                     Text("Relaxed").tag(1)
                     Text("Precise").tag(2)
                 }
-                .onChange(of: readbacksMode) { _, v in store.setInt("GPU", "readbacks_mode", v) }
+                .onChange(of: readbacksMode) { v in store.setInt("GPU", "readbacks_mode", v) }
                 Toggle("Direct Memory Access", isOn: $directMemoryAccess)
-                    .onChange(of: directMemoryAccess) { _, v in store.setBool("GPU", "direct_memory_access_enabled", v) }
+                    .onChange(of: directMemoryAccess) { v in store.setBool("GPU", "direct_memory_access_enabled", v) }
                 Stepper("VBlank Frequency: \(vblankFrequency) Hz", value: $vblankFrequency, in: 30...240, step: 10)
-                    .onChange(of: vblankFrequency) { _, v in store.setInt("GPU", "vblank_frequency", v) }
+                    .onChange(of: vblankFrequency) { v in store.setInt("GPU", "vblank_frequency", v) }
                 Toggle("Allow HDR", isOn: $hdrAllowed)
-                    .onChange(of: hdrAllowed) { _, v in store.setBool("GPU", "hdr_allowed", v) }
+                    .onChange(of: hdrAllowed) { v in store.setBool("GPU", "hdr_allowed", v) }
             }
 
             Section("Upscaling") {
                 Toggle("FSR Upscaling", isOn: $fsrEnabled)
-                    .onChange(of: fsrEnabled) { _, v in store.setBool("GPU", "fsr_enabled", v) }
+                    .onChange(of: fsrEnabled) { v in store.setBool("GPU", "fsr_enabled", v) }
                 Toggle("Sharpening (RCAS)", isOn: $rcasEnabled)
-                    .onChange(of: rcasEnabled) { _, v in store.setBool("GPU", "rcas_enabled", v) }
+                    .onChange(of: rcasEnabled) { v in store.setBool("GPU", "rcas_enabled", v) }
                 if rcasEnabled {
                     Stepper("Sharpening Strength: \(rcasAttenuation)", value: $rcasAttenuation, in: 0...1000, step: 25)
-                        .onChange(of: rcasAttenuation) { _, v in store.setInt("GPU", "rcas_attenuation", v) }
+                        .onChange(of: rcasAttenuation) { v in store.setInt("GPU", "rcas_attenuation", v) }
                     Text("Lower values sharpen the image more.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -93,13 +93,13 @@ struct SettingsGraphicsView: View {
 
             Section("Vulkan") {
                 Toggle("Vulkan Validation Layers", isOn: $vkValidationEnabled)
-                    .onChange(of: vkValidationEnabled) { _, v in store.setBool("Vulkan", "vkvalidation_enabled", v) }
+                    .onChange(of: vkValidationEnabled) { v in store.setBool("Vulkan", "vkvalidation_enabled", v) }
                 Toggle("Vulkan Crash Diagnostics", isOn: $vkCrashDiagnosticEnabled)
-                    .onChange(of: vkCrashDiagnosticEnabled) { _, v in store.setBool("Vulkan", "vkcrash_diagnostic_enabled", v) }
+                    .onChange(of: vkCrashDiagnosticEnabled) { v in store.setBool("Vulkan", "vkcrash_diagnostic_enabled", v) }
                 Toggle("RenderDoc Capture Support", isOn: $renderdocEnabled)
-                    .onChange(of: renderdocEnabled) { _, v in store.setBool("Vulkan", "renderdoc_enabled", v) }
+                    .onChange(of: renderdocEnabled) { v in store.setBool("Vulkan", "renderdoc_enabled", v) }
                 Toggle("Pipeline Cache", isOn: $pipelineCacheEnabled)
-                    .onChange(of: pipelineCacheEnabled) { _, v in store.setBool("Vulkan", "pipeline_cache_enabled", v) }
+                    .onChange(of: pipelineCacheEnabled) { v in store.setBool("Vulkan", "pipeline_cache_enabled", v) }
             }
         }
         .navigationTitle("Graphics")

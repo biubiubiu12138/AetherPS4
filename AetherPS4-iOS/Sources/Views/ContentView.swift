@@ -6,7 +6,7 @@ struct ContentView: View {
     // means every cold launch re-verifies rather than trusting a stale prior result.
     @State private var setupVerified = false
 
-    @Environment(EmulatorProcess.self) private var emulator
+    @EnvironmentObject private var emulator: EmulatorProcess
     @ObservedObject private var theme = AppTheme.shared
 
     var body: some View {

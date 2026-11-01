@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 
 /// Lets games (both freshly-imported PKGs and ones already in the library) live on an
 /// external drive instead of this app's own internal container -- iOS apps are sandboxed to
@@ -23,12 +23,11 @@ import Observation
 /// mutating methods (chooseFolder/forget/refresh) are only ever called from SwiftUI action
 /// closures and scenePhase changes in practice, i.e. already on the main thread, without
 /// needing the type system to enforce it.
-@Observable
-final class ExternalStorageStore {
+final class ExternalStorageStore: ObservableObject {
     static let shared = ExternalStorageStore()
 
-    private(set) var isConnected = false
-    private(set) var displayName: String?
+    @Published private(set) var isConnected = false
+    @Published private(set) var displayName: String?
 
     private static let bookmarkKey = "externalGamesStorageBookmark"
     private var accessedURL: URL?

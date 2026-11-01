@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 
 private struct PkgImportError: Error {
     let message: String
@@ -8,11 +8,10 @@ private struct PkgImportError: Error {
 /// Owns the persisted list of games. Games are stored by reference (path
 /// only); game metadata and cover art are dynamically probed and resolved.
 @MainActor
-@Observable
-final class GameLibrary {
-    private(set) var games: [Game] = []
-    private(set) var isImporting = false
-    var lastImportError: String?
+final class GameLibrary: ObservableObject {
+    @Published private(set) var games: [Game] = []
+    @Published private(set) var isImporting = false
+    @Published var lastImportError: String?
 
     private let storeURL: URL
     private let fileManager = FileManager.default

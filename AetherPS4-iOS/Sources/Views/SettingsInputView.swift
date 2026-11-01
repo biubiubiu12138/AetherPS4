@@ -13,11 +13,11 @@ struct SettingsInputView: View {
         Form {
             Section("Input") {
                 Toggle("Motion Controls", isOn: $motionControlsEnabled)
-                    .onChange(of: motionControlsEnabled) { _, v in store.setBool("Input", "motion_controls_enabled", v) }
+                    .onChange(of: motionControlsEnabled) { v in store.setBool("Input", "motion_controls_enabled", v) }
                 Toggle("Background Controller Input", isOn: $backgroundControllerInput)
-                    .onChange(of: backgroundControllerInput) { _, v in store.setBool("Input", "background_controller_input", v) }
+                    .onChange(of: backgroundControllerInput) { v in store.setBool("Input", "background_controller_input", v) }
                 Toggle("Treat Mice as Mice", isOn: $useMiceAsMice)
-                    .onChange(of: useMiceAsMice) { _, v in store.setBool("Input", "use_mice_as_mice", v) }
+                    .onChange(of: useMiceAsMice) { v in store.setBool("Input", "use_mice_as_mice", v) }
                 Text("Reports a connected trackpad/mouse as a real mouse instead of a second gamepad.")
                     .font(.caption)
                     .foregroundStyle(.secondary)

@@ -1616,6 +1616,8 @@ if (ENABLE_SHADPS4_IOS_LIB)
         src/platform/bachata/audio_transport.cpp
         src/core/sysmodules_import/sysmodules_import.cpp
         src/core/user_profile_bridge/user_profile_bridge.cpp)
+    target_compile_options(shadps4_ios PRIVATE
+        "$<$<COMPILE_LANGUAGE:CXX>:-include${CMAKE_CURRENT_SOURCE_DIR}/src/common/polyfill_thread.h>")
     create_target_directory_groups(shadps4_ios)
 
     target_compile_definitions(shadps4_ios PRIVATE

@@ -165,4 +165,3 @@
 [submodule "externals/libdeflate"]
 	path = externals/libdeflate
 	url = https://github.com/ebiggers/libdeflate.git
-

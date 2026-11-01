@@ -30,6 +30,20 @@ project(shadPS4 CXX C ASM ${ADDITIONAL_LANGUAGES})
 
 include(FetchContent)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    # The C++23 ostream header instantiates floating-point formatting even when
+    # the app uses fmt. Supply the actual missing iOS 16.3 implementation.
+    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-include${CMAKE_CURRENT_SOURCE_DIR}/src/platform/ios/libcxx16_compat.h>")
+    set(CHARCONV_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/runtime/sources/llvm-charconv/libcxx/src")
+    add_library(ios16_charconv STATIC
+        "${CHARCONV_SOURCE}/charconv.cpp"
+        "${CHARCONV_SOURCE}/ryu/d2fixed.cpp"
+        "${CHARCONV_SOURCE}/ryu/d2s.cpp"
+        "${CHARCONV_SOURCE}/ryu/f2s.cpp")
+    target_include_directories(ios16_charconv PRIVATE "${CHARCONV_SOURCE}")
+    target_compile_definitions(ios16_charconv PRIVATE _LIBCPP_ABI_DO_NOT_EXPORT_TO_CHARS_BASE_10)
+endif()
+
 # Forcing PIE makes sure that the base address is high enough so that it doesn't clash with the PS4 memory.
 if(UNIX AND NOT APPLE)
     set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
@@ -1628,7 +1642,7 @@ if (ENABLE_SHADPS4_IOS_LIB)
     if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
         target_link_libraries(shadps4_ios PRIVATE libusb::usb)
     endif()
-    target_link_libraries(shadps4_ios PRIVATE res::embedded)
+    target_link_libraries(shadps4_ios PRIVATE res::embedded ios16_charconv)
 
     if (ENABLE_FEX_GUEST_CPU)
         target_compile_definitions(shadps4_ios PRIVATE SHADPS4_ENABLE_FEX_GUEST_CPU=1)

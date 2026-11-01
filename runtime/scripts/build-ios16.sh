@@ -2,9 +2,18 @@
 set -euo pipefail
 ROOT=$(pwd)
 python3 runtime/scripts/patch-ios-dependencies.py
+CHARCONV="$ROOT/runtime/sources/llvm-charconv/libcxx/src"
+xcrun --sdk macosx clang++ -std=c++20 -O2 \
+  -isysroot "$(xcrun --sdk macosx --show-sdk-path)" \
+  -D_LIBCPP_ABI_DO_NOT_EXPORT_TO_CHARS_BASE_10 -I "$CHARCONV" \
+  "$CHARCONV/charconv.cpp" "$CHARCONV/ryu/d2fixed.cpp" \
+  "$CHARCONV/ryu/d2s.cpp" "$CHARCONV/ryu/f2s.cpp" \
+  tests/ios16/charconv_backport.cpp -o /tmp/aether-charconv-test
+/tmp/aether-charconv-test
 FEX_BUILD="$ROOT/runtime/build/fexcore-ios16"
 CORE_BUILD="$ROOT/runtime/build/shadps4-ios"
 cmake -S runtime/sources/fexcore-darwin -B "$FEX_BUILD" -G Ninja \
+  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_SYSTEM_PROCESSOR=arm64 \
   -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=16.2 -DCMAKE_BUILD_TYPE=Release \
@@ -21,6 +30,7 @@ xcrun --sdk macosx clang++ -O2 \
   externals/dear_imgui/misc/fonts/binary_to_compressed_c.cpp \
   -o runtime/build/host-tools/imgui-font-embed
 cmake -S . -B "$CORE_BUILD" -G Ninja \
+  -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_SYSTEM_PROCESSOR=arm64 \
   -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=16.2 -DCMAKE_BUILD_TYPE=Release \
@@ -41,5 +51,16 @@ xcodebuild -project AetherPS4-iOS/AetherPS4-iOS.xcodeproj \
 OUT="$ROOT/runtime/build/ios16-output"
 mkdir -p "$OUT/Payload"
 cp -R runtime/build/ios16-derived/Build/Products/Release-iphoneos/AetherPS4-iOS.app "$OUT/Payload/"
+APP="$OUT/Payload/AetherPS4-iOS.app"
+cp "$ROOT/runtime/sources/llvm-charconv/libcxx/LICENSE.TXT" "$APP/LLVM-LICENSE.txt"
+for framework in "$APP"/Frameworks/*.framework; do
+  codesign --force --sign - "$framework"
+done
+for library in "$APP"/Frameworks/*.dylib; do
+  codesign --force --sign - "$library"
+done
+codesign --force --sign - --entitlements "$ROOT/AetherPS4-iOS/AetherPS4-iOS.entitlements" "$APP"
+codesign -d --entitlements :- "$APP"
+xcrun vtool -show-build "$APP/AetherPS4-iOS"
 cd "$OUT"
 zip -qry AetherPS4-iOS16.2-experimental.ipa Payload

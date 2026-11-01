@@ -255,6 +255,13 @@ endif()
 
 # hwinfo
 set(HWINFO_STATIC ON)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    # The app logs CPU/RAM/OS only. Desktop probes require IOKit, absent on iOS.
+    set(HWINFO_SHARED OFF CACHE BOOL "" FORCE)
+    foreach(component BATTERY DISK MAINBOARD GPU NETWORK)
+        set(HWINFO_${component} OFF CACHE BOOL "" FORCE)
+    endforeach()
+endif()
 add_subdirectory(hwinfo)
 
 if (APPLE OR ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")

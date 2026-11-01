@@ -108,7 +108,7 @@ app_target.build_configurations.each do |config|
   config.build_settings['VALID_ARCHS'] = 'arm64'
   config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
   config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
-  config.build_settings['OTHER_LDFLAGS'] = ['-ObjC', '-lc++']
+  config.build_settings['OTHER_LDFLAGS'] = ['-ObjC', '-lc++', "-Wl,-force_load,#{build_dir}/libios16_charconv.a"]
   config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', build_dir, "#{build_dir}/**"]
   config.build_settings['FRAMEWORK_SEARCH_PATHS'] = ['$(inherited)', "#{File.absolute_path(project_dir)}/Frameworks"]
   config.build_settings['HEADER_SEARCH_PATHS'] = ['$(inherited)', File.absolute_path('src/platform/ios'), File.absolute_path('src/core/pkg_extract'), File.absolute_path('src/core/sysmodules_import'), File.absolute_path('src/core/user_profile_bridge')]

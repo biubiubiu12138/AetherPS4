@@ -65,5 +65,6 @@ done
 codesign --force --sign - --entitlements "$ROOT/AetherPS4-iOS/AetherPS4-iOS.entitlements" "$APP"
 codesign -d --entitlements :- "$APP"
 xcrun vtool -show-build "$APP/AetherPS4-iOS"
+python3 "$ROOT/runtime/scripts/audit-ios16-app.py" "$APP"
 cd "$OUT"
 zip -qry AetherPS4-iOS16.2-experimental.ipa Payload

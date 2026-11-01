@@ -7,6 +7,7 @@ on:
       - .gitmodules
       - .github/workflows/ios16-build.yml
       - runtime/scripts/build-ios16.sh
+      - runtime/scripts/patch-ios-dependencies.py
       - runtime/sources/fexcore-darwin/**
   workflow_dispatch:
 permissions:

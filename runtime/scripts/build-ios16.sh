@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT=$(pwd)
+python3 runtime/scripts/patch-ios-dependencies.py
 FEX_BUILD="$ROOT/runtime/build/fexcore-ios16"
 CORE_BUILD="$ROOT/runtime/build/shadps4-ios"
 cmake -S runtime/sources/fexcore-darwin -B "$FEX_BUILD" -G Ninja \

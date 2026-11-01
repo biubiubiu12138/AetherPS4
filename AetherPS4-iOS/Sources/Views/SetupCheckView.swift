@@ -110,7 +110,7 @@ struct SetupCheckView: View {
         if #available(iOS 17.0, *) {
             return "StikDebug isn't attached, or its JIT script isn't running. Open StikDebug, run the Universal JIT Script, then return here."
         }
-        return "JIT memory allocation was denied. Install through TrollStore with the dynamic-codesigning entitlement, then retry."
+        return "JIT memory allocation was denied. Enable JIT for this app through TrollStore, then retry."
     }
 
     private var failureHelp: some View {

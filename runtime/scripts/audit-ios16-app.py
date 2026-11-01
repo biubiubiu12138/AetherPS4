@@ -27,9 +27,12 @@ def audit(app):
     signed = subprocess.run(['codesign', '-d', '--entitlements', ':-', str(app)],
                             check=True, capture_output=True)
     entitlements = plistlib.loads(signed.stdout)
-    for key in ('get-task-allow', 'dynamic-codesigning',
+    for key in ('get-task-allow',
                 'com.apple.developer.kernel.increased-memory-limit'):
         assert entitlements.get(key) is True, 'Missing entitlement: ' + key
+    for key in ('dynamic-codesigning', 'com.apple.private.cs.debugger',
+                'com.apple.private.skip-library-validation'):
+        assert not entitlements.get(key), 'TrollStore-incompatible entitlement: ' + key
     builds = {}
     for path in (binary, app / 'Frameworks/BreakpointJIT.framework/BreakpointJIT',
                  app / 'Frameworks/libvulkan.dylib'):

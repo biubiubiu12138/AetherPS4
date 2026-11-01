@@ -1,3 +1,21 @@
+# Status: paused — unresolved startup failure
+
+As of 2026-11-01, work is paused at the user's request. Do not treat this port as working on iOS 16.2.
+
+## Device findings
+
+- Device: iPhone 14 Pro Max, iOS 16.2 (20C65), installed with TrollStore.
+- Original IPA: immediate launch failure, confirmed in device syslog as NSPOSIXErrorDomain code 85, “Bad executable (or shared library)”. No app process was established.
+- The original package incorrectly included `dynamic-codesigning`. TrollStore documents this as a banned entitlement on A12+; it was removed, and the audit now rejects that entitlement and the other two documented banned entitlements. See https://github.com/opa334/TrollStore#banned-entitlements.
+- A local repackaged IPA, `AetherPS4-iOS16.2-TrollStore-fix1.ipa`, passed signature, deployment target, architecture, ZIP and targeted symbol checks. SHA-256: `e70789236a17e6c9b98bb0241c118765719a8f0d6d2ee6aba499713466f81701`.
+- The user reports that fix1 still immediately exits. The USB log session disconnected before that launch was captured; the new failure cause is unknown. Do not claim it is still code 85.
+- No successful UI launch, JIT execution, or game execution has been verified. Removing the entitlement does not itself enable JIT.
+- Resume by obtaining a fresh fix1 launch log / crash report over a stable device connection; determine the actual failure before making further compatibility changes.
+
+No device identifiers or unrelated device logs are included in the repository. The record below describes the original historical build and is not a successful device validation.
+
+---
+
 # iOS 16.2 experimental port
 
 An experimental IPA has been built from source for arm64 iPhones running iOS 16.2.
@@ -41,4 +59,4 @@ Transfer the IPA to the phone and install with TrollStore. The bundled startup c
 
 ## Remaining device validation
 
-This IPA has not been launched on the user's iPhone 14 Pro Max. Compilation, signing and static compatibility checks do not prove game compatibility, performance, successful JIT execution on that phone, or complete offline operation. No games or PS4 system modules are included.
+The original IPA and the entitlement-corrected local IPA were tested by the user and both failed to launch successfully. Compilation, signing and static compatibility checks do not prove game compatibility, performance, successful JIT execution on that phone, or complete offline operation. No games or PS4 system modules are included.

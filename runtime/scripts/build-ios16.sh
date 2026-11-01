@@ -14,10 +14,17 @@ cmake -S runtime/sources/fexcore-darwin -B "$FEX_BUILD" -G Ninja \
   -DENABLE_VIXL_DISASSEMBLER=OFF -DENABLE_VIXL_SIMULATOR=OFF \
   -DENABLE_GDB_SYMBOLS=OFF -DENABLE_ZYDIS=OFF -DENABLE_FEXCORE_PROFILER=OFF
 cmake --build "$FEX_BUILD" --target FEXCore Common CommonTools JemallocLibs --parallel 3
+mkdir -p runtime/build/host-tools
+xcrun --sdk macosx clang++ -O2 \
+  -isysroot "$(xcrun --sdk macosx --show-sdk-path)" \
+  externals/dear_imgui/misc/fonts/binary_to_compressed_c.cpp \
+  -o runtime/build/host-tools/imgui-font-embed
 cmake -S . -B "$CORE_BUILD" -G Ninja \
   -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_SYSTEM_PROCESSOR=arm64 \
   -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=16.2 -DCMAKE_BUILD_TYPE=Release \
+  -DIMGUI_FONT_EMBED_EXECUTABLE="$ROOT/runtime/build/host-tools/imgui-font-embed" \
+  -DALLOWS_ONESHOT_TIMERS_WITH_TIMEOUT_ZERO=OFF \
   -DENABLE_SHADPS4_IOS_LIB=ON -DENABLE_FEX_GUEST_CPU=ON \
   -DENABLE_DISCORD_RPC=OFF -DENABLE_UPDATER=OFF \
   -DFEXCORE_GUEST_CPU_SOURCE_DIR="$ROOT/runtime/sources/fexcore-darwin" \

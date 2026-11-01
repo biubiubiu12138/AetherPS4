@@ -13,7 +13,7 @@ cmake -S runtime/sources/fexcore-darwin -B "$FEX_BUILD" -G Ninja \
   -DENABLE_JEMALLOC_GLIBC_ALLOC=OFF -DENABLE_OFFLINE_TELEMETRY=OFF \
   -DENABLE_VIXL_DISASSEMBLER=OFF -DENABLE_VIXL_SIMULATOR=OFF \
   -DENABLE_GDB_SYMBOLS=OFF -DENABLE_ZYDIS=OFF -DENABLE_FEXCORE_PROFILER=OFF
-cmake --build "$FEX_BUILD" --target FEXCore Common CommonTools --parallel 3
+cmake --build "$FEX_BUILD" --target FEXCore Common CommonTools JemallocLibs --parallel 3
 cmake -S . -B "$CORE_BUILD" -G Ninja \
   -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_SYSTEM_PROCESSOR=arm64 \
   -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_SYSROOT=iphoneos \

@@ -4,7 +4,8 @@
 #include <cstdint>
 
 #if defined(__APPLE__)
-#include <os/os_sync_wait_on_address.h>
+#include <condition_variable>
+#include <mutex>
 #elif !defined(_WIN32)
 #include <linux/futex.h> /* Definition of FUTEX_* constants */
 #include <sys/syscall.h> /* Definition of SYS_* constants */
@@ -273,28 +274,32 @@ public:
 private:
 
 #if defined(__APPLE__)
-  // Darwin's os_sync_wait_on_address family is explicitly documented by Apple as "Darwin's
-  // futex style APIs" -- compare-and-wait / wake-by-address, the same fundamental primitive.
-  // One real gap versus Linux's FUTEX_WAIT_BITSET/FUTEX_WAKE_BITSET: there's no bitset filter
-  // to selectively wake only the writer-waiters or only the reader-waiters sharing this one
-  // Futex word. Waking the unfiltered set is still *correct* (never a hang or a lost wakeup) --
-  // every wait loop in this class already re-checks the atomic state and tolerates spurious
-  // wakeups by design (see the "Can get some spurious wake-ups" comment in lock_shared()) --
-  // just occasionally less efficient than Linux's selective wake.
+  // Compare and wait while holding the same mutex used by wakeups. This closes
+  // the check/sleep race without requiring iOS 17.4's os_sync_* entry points.
+  // The outer atomic state machine still controls writer priority.
+  std::mutex WaitMutex;
+  std::condition_variable WaitCondition;
+
   void FutexWaitForWriteAvailable(uint32_t Expected) {
-    os_sync_wait_on_address(&Futex, Expected, sizeof(Futex), OS_SYNC_WAIT_ON_ADDRESS_NONE);
+    std::unique_lock<std::mutex> lock(WaitMutex);
+    WaitCondition.wait(lock, [&] {
+      return std::atomic_ref<uint32_t>(Futex).load(std::memory_order_acquire) != Expected;
+    });
   }
 
   void FutexWaitForReadAvailable(uint32_t Expected) {
-    os_sync_wait_on_address(&Futex, Expected, sizeof(Futex), OS_SYNC_WAIT_ON_ADDRESS_NONE);
+    FutexWaitForWriteAvailable(Expected);
   }
 
   void FutexWakeWriter() {
-    os_sync_wake_by_address_any(&Futex, sizeof(Futex), OS_SYNC_WAKE_BY_ADDRESS_NONE);
+    std::lock_guard<std::mutex> lock(WaitMutex);
+    // Readers and writers share a condition; wake all so the eligible writer
+    // cannot remain asleep after a reader receives the notification.
+    WaitCondition.notify_all();
   }
 
   void FutexWakeReaders() {
-    os_sync_wake_by_address_all(&Futex, sizeof(Futex), OS_SYNC_WAKE_BY_ADDRESS_NONE);
+    FutexWakeWriter();
   }
 #elif !defined(_WIN32)
   void FutexWaitForWriteAvailable(uint32_t Expected) {

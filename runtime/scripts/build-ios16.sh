@@ -10,6 +10,9 @@ xcrun --sdk macosx clang++ -std=c++20 -O2 \
   "$CHARCONV/ryu/d2s.cpp" "$CHARCONV/ryu/f2s.cpp" \
   tests/ios16/charconv_backport.cpp -o /tmp/aether-charconv-test
 /tmp/aether-charconv-test
+xcrun --sdk iphoneos clang++ -fsyntax-only -std=c++23 -arch arm64 \
+  -isysroot "$(xcrun --sdk iphoneos --show-sdk-path)" -miphoneos-version-min=16.2 \
+  -include src/platform/ios/libcxx16_compat.h tests/ios16/charconv_backport.cpp
 FEX_BUILD="$ROOT/runtime/build/fexcore-ios16"
 CORE_BUILD="$ROOT/runtime/build/shadps4-ios"
 cmake -S runtime/sources/fexcore-darwin -B "$FEX_BUILD" -G Ninja \
